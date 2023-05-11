@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  talktalk-db:
+    image: postgres:14
+    ports:
+      - 5437:5432
+    environment:
+      POSTGRES_USER: talkuser
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: talktalk
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8082:8080
