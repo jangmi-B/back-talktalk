@@ -4,12 +4,13 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { JwtConstants } from './constants';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'topSecret123',
+      secret: JwtConstants.secret,
       signOptions: {
         expiresIn: 60 * 60,
       },
@@ -19,6 +20,6 @@ import { JwtStrategy } from './jwt.strategy';
   // JwtStrategy를 AuthModule에서 사용할 수 있게 등록
   providers: [AuthService, JwtStrategy],
   // JwtStrategy, PassportModule를 다른 모듈에서 사용할 수 있게 등록
-  exports: [AuthService, JwtStrategy, PassportModule],
+  exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}

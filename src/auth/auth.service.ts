@@ -33,7 +33,7 @@ export class AuthService {
     }
   }
 
-  async signIn(
+  async logIn(
     authCredentialDto: AuthCredentialDto,
   ): Promise<{ accessToken: string }> {
     const { id, password } = authCredentialDto;
