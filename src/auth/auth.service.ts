@@ -21,6 +21,7 @@ export class AuthService {
     const hashPwd = await bcrypt.hash(password, salt);
 
     try {
+      console.log(authCredentialDto);
       const user = await prisma.user.create({
         data: { id, password: hashPwd, name },
       });
@@ -53,5 +54,40 @@ export class AuthService {
     } else {
       throw new UnauthorizedException('로그인 실패!!!');
     }
+  }
+
+  async modifyUser(authCredentialDto: AuthCredentialDto): Promise<boolean> {
+    const result = false;
+    const salt = await bcrypt.genSalt();
+    const hashPwd = await bcrypt.hash(authCredentialDto.password, salt);
+
+    console.log('들어옴');
+    console.log(authCredentialDto);
+
+    const changeUser = await prisma.user.update({
+      where: { userIdx: authCredentialDto.userIdx },
+      data: {
+        name: authCredentialDto.name,
+        password: hashPwd,
+      },
+    });
+
+    return result;
+  }
+
+  async isDuplicate(authCredentialDto: AuthCredentialDto): Promise<boolean> {
+    let result = false;
+
+    const isExist = await prisma.user.findUnique({
+      where: {
+        id: authCredentialDto.id,
+      },
+    });
+
+    if (isExist !== null) {
+      result = true;
+    }
+
+    return result;
   }
 }
