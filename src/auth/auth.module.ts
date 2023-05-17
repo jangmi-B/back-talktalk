@@ -12,7 +12,7 @@ import { JwtConstants } from './constants';
     JwtModule.register({
       secret: JwtConstants.secret,
       signOptions: {
-        expiresIn: 60 * 60,
+        expiresIn: 12 * 60 * 60,
       },
     }),
   ],

@@ -61,20 +61,19 @@ export class AuthController {
     return this.authService.isDuplicate(authCredentialDto);
   }
 
-  @Post('/getCookies')
-  getCookie(@Req() request) {
-    const cookies = request.cookies;
-    const auth = cookies.Authentication;
-    console.log(auth);
-    return auth;
-  }
+  // @Post('/getCookies')
+  // getCookie(@Req() request) {
+  //   const cookies = request.cookies;
+  //   const auth = cookies.Authentication;
+  //   console.log(auth);
+  //   return auth;
+  // }
 
   @Post('/check')
   @UseGuards(AuthGuard())
   async check(@Req() req) {
     console.log(req.user);
     //요청안에 user가 있으면 req.user로 가져올 수 있다.
-    // console.log('req', req.user);
     return req.user;
   }
 }
