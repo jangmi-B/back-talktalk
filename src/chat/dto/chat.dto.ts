@@ -1,3 +1,5 @@
+import { User } from 'src/auth/dto/user.dto';
+
 export class Chat {
   chatIdx: number;
   roomIdx: number;
@@ -5,4 +7,5 @@ export class Chat {
   text: string;
   isMine: boolean;
   createAt: Date;
+  user?: User;
 }

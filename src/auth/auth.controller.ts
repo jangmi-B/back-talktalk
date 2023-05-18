@@ -29,8 +29,6 @@ export class AuthController {
     @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    console.log('로그인');
-
     const access_token = await this.authService.logIn(authCredentialDto);
     // 토큰쿠키저장
     response.cookie('Authentication', access_token, {
@@ -39,7 +37,6 @@ export class AuthController {
       httpOnly: false,
       // httpOnly: true,
     });
-    console.log('res', response);
     return access_token;
   }
 
@@ -72,7 +69,6 @@ export class AuthController {
   @Post('/check')
   @UseGuards(AuthGuard())
   async check(@Req() req) {
-    console.log(req.user);
     //요청안에 user가 있으면 req.user로 가져올 수 있다.
     return req.user;
   }

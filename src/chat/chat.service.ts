@@ -38,6 +38,75 @@ export class ChatService {
     return chatMember;
   }
 
+  // 나중에 해당하는 룸에 있는 사람이 아닌 접근권한 막으려고 작성함
+  async getRoomMemberIdxList(data: ChatRoom) {
+    const rooms = await prisma.chatMember.findMany({
+      where: {
+        roomIdx: data.roomIdx, // 채팅룸 ID로 ChatMember를 검색
+      },
+    });
+    console.log(rooms);
+    return rooms.map((chatMember) => chatMember.userIdx);
+  }
+
+  async getRoomMemberInfoList(data: any) {
+    const users = await prisma.chatMember.findMany({
+      where: {
+        roomIdx: data.roomIdx,
+        userIdx: {
+          in: data.users,
+        },
+      },
+      include: {
+        user: true,
+        room: true,
+      },
+    });
+
+    console.log(
+      users.map((chatMember) => ({
+        user: chatMember.user,
+        room: chatMember.room,
+      })),
+    );
+    return users.map((chatMember) => ({
+      user: chatMember.user,
+      room: chatMember.room,
+    }));
+  }
+
+  async addRoomMember(member: ChatRoom) {
+    const chatMember = await prisma.chatMember.create({
+      data: {
+        userIdx: member.userIdx,
+        roomIdx: member.roomIdx,
+      },
+    });
+    return chatMember;
+  }
+
+  async deleteRoomMember(member: ChatRoom) {
+    try {
+      // 해당 사용자의 채팅 삭제
+      // await prisma.chat.deleteMany({
+      //   where: {
+      //     userIdx: member.userIdx,
+      //     roomIdx: member.roomIdx,
+      //   },
+      // });
+
+      // 해당 사용자의 채팅 멤버 삭제
+      await prisma.chatMember.deleteMany({
+        where: {
+          userIdx: member.userIdx,
+          roomIdx: member.roomIdx,
+        },
+      });
+    } catch (error) {
+      console.error('deleteRoomMember :', error);
+    }
+  }
+
   async getRoomIdxList(userIdx: any) {
     const rooms = await prisma.chatMember.findMany({
       where: {
@@ -58,8 +127,10 @@ export class ChatService {
       orderBy: {
         createAt: 'asc', // 'asc'는 오름차순, 'desc'는 내림차순
       },
+      include: {
+        user: true,
+      },
     });
-    console.log('>>>>>> ', chats);
     return chats;
   }
 
@@ -73,5 +144,15 @@ export class ChatService {
       },
     });
     return chat;
+  }
+
+  async senderInfo(data: any) {
+    const sender = await prisma.user.findUnique({
+      where: {
+        userIdx: data.userIdx,
+      },
+    });
+
+    return sender;
   }
 }

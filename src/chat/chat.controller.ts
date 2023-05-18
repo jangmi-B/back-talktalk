@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatRoom } from './dto/chatRoom.dto';
 import { Chat } from './dto/chat.dto';
+import { User } from '@prisma/client';
 
 @Controller('chat')
 export class ChatController {
@@ -23,6 +24,27 @@ export class ChatController {
     return this.chatService.addChatMember(data);
   }
 
+  // 참여중인 멤버들 가져오려고
+  @Post('/roomMember')
+  async getRoomMemberIdxList(@Body() data: ChatRoom) {
+    return this.chatService.getRoomMemberIdxList(data);
+  }
+
+  @Post('/memberInfo')
+  async getRoomMemberInfoList(@Body() data: any) {
+    return this.chatService.getRoomMemberInfoList(data);
+  }
+
+  @Post('/roomMemberList')
+  async addRoomMember(@Body() data: ChatRoom) {
+    return this.chatService.addRoomMember(data);
+  }
+
+  @Post('/deleteMember')
+  async deleteRoomMember(@Body() data: ChatRoom) {
+    return this.chatService.deleteRoomMember(data);
+  }
+
   @Get('/getRoomIdxList/:userIdx')
   async getRoomIdxList(@Param('userIdx') userIdx: number) {
     return this.chatService.getRoomIdxList(userIdx);
@@ -35,7 +57,11 @@ export class ChatController {
 
   @Post('/saveChat')
   async saveChat(@Body() data: Chat) {
-    console.log('>>>>>', data);
     return this.chatService.saveChat(data);
+  }
+
+  @Post('/sender')
+  async senderInfo(@Body() data: any) {
+    return this.chatService.senderInfo(data);
   }
 }
