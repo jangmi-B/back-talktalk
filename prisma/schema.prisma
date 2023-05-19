@@ -11,15 +11,16 @@ datasource db {
 }
 
 model User {
-  userIdx     Int          @id @default(autoincrement())
-  id          String       @unique
-  password    String
-  name        String
-  profileImg  String?
-  isDelete    String       @default("N")
-  createAt    DateTime     @default(now())
-  chats       Chat[]
-  chatMembers ChatMember[]
+  userIdx      Int          @id @default(autoincrement())
+  id           String       @unique
+  password     String
+  name         String
+  originalName String?
+  profileImg   String?
+  isDelete     String       @default("N")
+  createAt     DateTime     @default(now())
+  chats        Chat[]
+  chatMembers  ChatMember[]
 }
 
 model ChatRoom {

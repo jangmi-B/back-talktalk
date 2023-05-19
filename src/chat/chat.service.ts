@@ -45,7 +45,6 @@ export class ChatService {
         roomIdx: data.roomIdx, // 채팅룸 ID로 ChatMember를 검색
       },
     });
-    console.log(rooms);
     return rooms.map((chatMember) => chatMember.userIdx);
   }
 
@@ -110,13 +109,53 @@ export class ChatService {
   async getRoomIdxList(userIdx: any) {
     const rooms = await prisma.chatMember.findMany({
       where: {
-        userIdx: parseInt(userIdx), // 사용자 ID로 ChatMember를 검색
+        userIdx: parseInt(userIdx),
       },
       include: {
-        room: true, // ChatMember와 연결된 ChatRoom 정보를 가져옴
+        room: {
+          include: {
+            chats: {
+              orderBy: {
+                createAt: 'desc',
+              },
+              take: 1,
+              include: {
+                user: true, // chats에 해당하는 user 정보를 가져오기 위해 include 옵션 사용
+              },
+            },
+          },
+        },
+        user: true,
       },
     });
-    return rooms.map((chatMember) => chatMember.room);
+
+    const result = rooms.map((chatMember) => {
+      const room = chatMember.room;
+      const chat = room?.chats[0];
+      const user = chat?.user;
+
+      return {
+        ...room,
+        chat,
+        user,
+      };
+    });
+
+    const sortedResult = result.sort((a, b) => {
+      if (a.chat && b.chat) {
+        return a.chat.createAt > b.chat.createAt ? -1 : 1;
+      } else if (a.chat && !b.chat) {
+        return -1;
+      } else if (!a.chat && b.chat) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    console.log(sortedResult);
+
+    return sortedResult;
   }
 
   async getChatList(data: Chat) {
