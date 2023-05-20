@@ -17,6 +17,7 @@ export const multerOptions = {
   storage: diskStorage({
     destination: (request, file, callback) => {
       // 저장경로 설정
+      // https://songhee96.tistory.com/27
       const uploadPath: string =
         '/Users/baegseunghyeon/Documents/front-chatapp/public/images/upload';
 
