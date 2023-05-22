@@ -90,9 +90,6 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashPwd = await bcrypt.hash(authCredentialDto.password, salt);
 
-    console.log('들어옴');
-    console.log(authCredentialDto);
-
     const changeUser = await prisma.user.update({
       where: { userIdx: authCredentialDto.userIdx },
       data: {

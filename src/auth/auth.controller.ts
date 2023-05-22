@@ -31,6 +31,7 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
     const access_token = await this.authService.logIn(authCredentialDto);
+
     // 토큰쿠키저장
     response.cookie('Authentication', access_token, {
       domain: 'localhost',
@@ -38,6 +39,7 @@ export class AuthController {
       httpOnly: false,
       // httpOnly: true,
     });
+
     return access_token;
   }
 
