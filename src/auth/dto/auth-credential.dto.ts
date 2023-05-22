@@ -5,6 +5,7 @@ import {
   MinLength,
   isString,
 } from 'class-validator';
+// 유효성 체크를 하기 위해서는 class-validator 모듈을 사용
 
 export class AuthCredentialDto {
   userIdx: number;

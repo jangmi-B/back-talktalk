@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { User } from 'src/auth/dto/user.dto';
 import { ChatRoom } from './dto/chatRoom.dto';
 import { Chat } from './dto/chat.dto';
 const prisma = new PrismaClient();
@@ -10,10 +9,14 @@ export class ChatService {
   async getAllMember() {
     const members = await prisma.user.findMany({
       orderBy: {
-        name: 'asc', // 'asc'는 오름차순, 'desc'는 내림차순
+        name: 'asc', // 'asc'는 오름차순, 'desc'는 내림차순인데 정렬이 제대로 안됨
       },
     });
-    return members;
+
+    // 이름순으로 정렬
+    const sortedMembers = members.sort((a, b) => a.name.localeCompare(b.name));
+
+    return sortedMembers;
   }
 
   async makeChatRoom(data: any) {
@@ -62,12 +65,6 @@ export class ChatService {
       },
     });
 
-    // console.log(
-    //   users.map((chatMember) => ({
-    //     user: chatMember.user,
-    //     room: chatMember.room,
-    //   })),
-    // );
     return users.map((chatMember) => ({
       user: chatMember.user,
       room: chatMember.room,
@@ -153,26 +150,55 @@ export class ChatService {
       }
     });
 
-    console.log(sortedResult);
-
     return sortedResult;
   }
 
   // https://velog.io/@corgi-world/Next.js-React-Query-Prisma%EC%99%80-%ED%95%A8%EA%BB%98%ED%95%98%EB%8A%94-%EB%AC%B4%ED%95%9C-%EC%8A%A4%ED%81%AC%EB%A1%A4
   async getChatList(data: Chat) {
+    const pageSize = 50;
+    const skip = (data.page - 1) * pageSize;
+    // const take = pageSize * data.page;
+
     const chats = await prisma.chat.findMany({
+      skip,
+      take: pageSize,
       where: {
         roomIdx: data.roomIdx,
       },
       orderBy: {
-        createAt: 'asc', // 'asc'는 오름차순, 'desc'는 내림차순
+        createAt: 'desc', // 'asc'는 오름차순, 'desc'는 내림차순
       },
       include: {
         user: true,
       },
     });
-    return chats;
+
+    return chats.reverse();
   }
+
+  // async addChatList(data: Chat) {
+  //   const pageSize = 50;
+  //   const skip = data.page * pageSize;
+  //   const take = pageSize;
+
+  //   const chats = await prisma.chat.findMany({
+  //     skip,
+  //     take,
+  //     where: {
+  //       roomIdx: data.roomIdx,
+  //     },
+  //     orderBy: {
+  //       createAt: 'desc', // 'asc'는 오름차순, 'desc'는 내림차순
+  //     },
+  //     include: {
+  //       user: true,
+  //     },
+  //   });
+
+  //   console.log(chats.reverse());
+
+  //   return chats.reverse();
+  // }
 
   async saveChat(data: Chat) {
     const chat = await prisma.chat.create({

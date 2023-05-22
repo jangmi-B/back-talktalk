@@ -8,4 +8,5 @@ export class Chat {
   isMine: boolean;
   createAt: Date;
   user?: User;
+  page: number;
 }

@@ -10,7 +10,9 @@ import { JwtConstants } from './constants';
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
+      // 토큰을 만들 때 이용하는 Secret 텍스트
       secret: JwtConstants.secret,
+      // 유효시간
       signOptions: {
         expiresIn: 12 * 60 * 60,
       },

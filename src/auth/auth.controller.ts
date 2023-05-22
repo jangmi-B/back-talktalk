@@ -18,6 +18,7 @@ export class AuthController {
 
   @Post('/signUp')
   async signUp(
+    // Dto에 있는 유효성 조건에 맞게 체크를 해주려면 ValidationPipe 필요
     @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
   ): Promise<void> {
     return this.authService.signUp(authCredentialDto);
@@ -66,6 +67,10 @@ export class AuthController {
   //   return auth;
   // }
 
+  /**
+   * UseGuards안에 @nestjs/passport에서 가져온 AuthGuard()를
+   * 이용하면 요청안에 유저 정보를 넣어줄수있습니다.
+   */
   @Post('/check')
   @UseGuards(AuthGuard())
   async check(@Req() req) {
